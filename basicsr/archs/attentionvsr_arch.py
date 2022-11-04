@@ -10,14 +10,6 @@ from positional_encodings import PositionalEncodingPermute3D
 
 @ARCH_REGISTRY.register()
 class BasicAttention_VSR(nn.Module):
-    """A recurrent network with attention for video SR. Now only x4 is supported.
-
-    Args:
-        num_feat (int): Number of channels. Default: 64.
-        num_block (int): Number of residual blocks for each branch. Default: 15
-        spynet_path (str): Path to the pretrained weights of SPyNet. Default: None.
-    """
-
     def __init__(self,
                  image_ch=3,
                  num_feat=64,
