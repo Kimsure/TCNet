@@ -16,7 +16,7 @@ Architecture of the proposed **temporal consistency learning approach**
 <div align=center><img src="./assets/TAB2_1.png" width="730px" /> 
 </div>
 
-<div align=center><img src="./assets/description.png" width="630px" /> 
+<div align=center><img src="./assets/description.png" width="500px" /> 
 </div>
 
 ## Codes
@@ -28,7 +28,7 @@ We thank [Xintao](https://xinntao.github.io/) and his group for their open-sourc
 - Linux Ubuntu 18.04+
 - Anaconda
 - Python 3.7+
-- Pytorch 1.10+
+- Pytorch 1.7+
 
 ### DatasetsPreparation
 
