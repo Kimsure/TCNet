@@ -45,7 +45,9 @@ class BasicAttention_VSR(nn.Module):
         self.forward_trunk = ConvResidualBlocks(2*num_feat + 3, num_feat, num_block)
 
         # reconstruction
+        self.Pyramidfusion = PyramidFusion(ConvBlock, num_feat)
         self.fusion = nn.Conv2d(num_feat * 3, num_feat, 1, 1, 0, bias=True)
+        self.tensor_fusion = nn.Conv2d(num_feat * 2, num_feat, 1, 1, 0, bias=True)
         self.upconv1 = nn.Conv2d(num_feat, num_feat * 4, 3, 1, 1, bias=True)
         self.upconv2 = nn.Conv2d(num_feat, 64 * 4, 3, 1, 1, bias=True)
         self.conv_hr = nn.Conv2d(64, 64, 3, 1, 1)
@@ -363,7 +365,73 @@ class DANetHead(nn.Module):
         sasc_output = self.conv8(feat_sum)
         return sasc_output
     
-    
+
+# for Fusion
+class ConvBlock(nn.Module):
+    def __init__(self, in_channel, out_channel, strides=1):
+        super(ConvBlock, self).__init__()
+        self.strides = strides
+        self.in_channel=in_channel
+        self.out_channel=out_channel
+        self.block = nn.Sequential(
+            nn.Conv2d(in_channel, out_channel, kernel_size=3, stride=strides, padding=1),
+            nn.LeakyReLU(inplace=True),
+            nn.Conv2d(out_channel, out_channel, kernel_size=3, stride=strides, padding=1),
+            nn.LeakyReLU(inplace=True),
+        )
+        self.conv11 = nn.Conv2d(in_channel, out_channel, kernel_size=1, stride=strides, padding=0)
+
+    def forward(self, x):
+        out1 = self.block(x)
+        out2 = self.conv11(x)
+        out = out1 + out2
+        return out
+
+
+class PyramidFusion(nn.Module):
+    """ Fusion Module """
+    def __init__(self, block=ConvBlock, dim=64):
+        super(PyramidFusion, self).__init__()
+
+        self.dim = dim
+        self.ConvBlock1 = ConvBlock(dim, dim, strides=1)
+        self.pool1 = nn.Conv2d(dim, dim, kernel_size=4, stride=2, padding=1)
+
+        self.ConvBlock2 = block(dim, dim * 2, strides=1)
+        self.pool2 = nn.Conv2d(dim * 2, dim * 2, kernel_size=4, stride=2, padding=1)
+
+        self.ConvBlock3 = block(dim * 2, dim * 4, strides=1)
+
+        self.upv4 = nn.ConvTranspose2d(dim * 4, dim * 2, 2, stride=2)
+        self.ConvBlock4 = block(dim * 4, dim * 2, strides=1)
+
+        self.upv5 = nn.ConvTranspose2d(dim * 2, dim, 2, stride=2)
+        self.ConvBlock5 = block(dim * 2, dim, strides=1)
+
+        self.conv6 = nn.Conv2d(dim, dim, kernel_size=3, stride=1, padding=1)
+
+    def forward(self, x):
+        conv1 = self.ConvBlock1(x)
+        pool1 = self.pool1(conv1)
+
+        conv2 = self.ConvBlock2(pool1)
+        pool2 = self.pool2(conv2)
+
+        conv3 = self.ConvBlock3(pool2)
+
+        up4 = self.upv4(conv3)
+        up4 = torch.cat([up4, conv2], 1)
+        conv8 = self.ConvBlock4(up4)
+
+        up5 = self.upv5(conv8)
+        up5 = torch.cat([up5, conv1], 1)
+        conv5 = self.ConvBlock5(up5)
+
+        conv6 = self.conv6(conv5)
+        out = x + conv6
+
+        return out
+
     
 if __name__ == '__main__':
     a = torch.rand(1,7,3,180,270)
