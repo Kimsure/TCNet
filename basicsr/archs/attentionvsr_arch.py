@@ -5,7 +5,7 @@ from torch.nn import functional as F
 from basicsr.utils.registry import ARCH_REGISTRY
 from .arch_util import ResidualBlockNoBN, flow_warp, make_layer
 from .spynet_arch import SpyNet
-from positional_encodings import PositionalEncodingPermute3D
+# from positional_encodings import PositionalEncodingPermute3D
 
 
 @ARCH_REGISTRY.register()
@@ -34,7 +34,7 @@ class BasicAttention_VSR(nn.Module):
         self.lrelu = nn.LeakyReLU(negative_slope=0.1, inplace=True)
 
         # Transformer
-        self.pos_embedding = PositionalEncodingPermute3D(num_frame)
+        # self.pos_embedding = PositionalEncodingPermute3D(num_frame)
         self.transformer = Transformer(num_feat, feat_size, depth, patch_size, heads)
 
         # alignment
@@ -77,7 +77,7 @@ class BasicAttention_VSR(nn.Module):
         print(feat.shape)
         # transformer
 
-        feat = feat + self.pos_embedding(feat)                              
+        # feat = feat + self.pos_embedding(feat)                              
         attention_feat = self.transformer(feat)  
         return attention_feat
 
