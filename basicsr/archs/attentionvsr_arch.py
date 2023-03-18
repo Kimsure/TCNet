@@ -57,7 +57,7 @@ class BasicAttention_VSR(nn.Module):
 
         # reconstruction
         self.Pyramidfusion = PyramidFusion(ConvBlock, num_feat)
-        self.fusion = nn.Conv2d(num_feat * 3, num_feat, 1, 1, 0, bias=True)
+        self.fusion = nn.Conv2d(num_feat * 2, num_feat, 1, 1, 0, bias=True)
         self.tensor_fusion = nn.Conv2d(num_feat * 2, num_feat, 1, 1, 0, bias=True)
         self.upconv1 = nn.Conv2d(num_feat, num_feat * 4, 3, 1, 1, bias=True)
         self.upconv2 = nn.Conv2d(num_feat, 64 * 4, 3, 1, 1, bias=True)
