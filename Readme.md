@@ -1,7 +1,5 @@
 # Official Repo of TCNet
 
-Note that codes are not fully completed and still on updating these days. Please remember to check repo to be consistent with the local one.
-
 We thank [Xintao](https://xinntao.github.io/) and his group for their open-sourced image/video processing ToolBox [**BasicSR**](https://github.com/XPixelGroup/BasicSR/). Our codes are totally based on it.
 
 ### Prerequisites
@@ -40,14 +38,4 @@ We thank [Xintao](https://xinntao.github.io/) and his group for their open-sourc
   year = {2022},
   publisher = {IEEE}
 }
-@misc{basicsr,
-  author = {Xintao Wang and Liangbin Xie and Ke Yu and Kelvin C.K. Chan and Chen Change Loy and Chao Dong},
-  title = {{BasicSR}: Open Source Image and Video Restoration Toolbox},
-  howpublished = {https://github.com/XPixelGroup/BasicSR},
-  year = {2022}
-}
 ```
-
-### Acknowledgement
-
-Traning and testing codes are based on [**BasicSR**](https://github.com/XPixelGroup/BasicSR/blob/master/docs/INSTALL.md).
